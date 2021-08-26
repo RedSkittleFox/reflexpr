@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Visual Studio Solution (for testing)
+ruby-reflexpr.sln
+ruby-reflexpr.vcxproj
+ruby-reflexpr.vcxproj.filters
+
 # User-specific files
 *.rsuser
 *.suo
