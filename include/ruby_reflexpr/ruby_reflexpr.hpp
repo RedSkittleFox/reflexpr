@@ -10,8 +10,8 @@
 ///		* Improve struct parsing.
 ///		* Introduce noreflect keyword
 ///		
-#ifndef RUBY_RUBY_REFLEXPR_H_
-#define RUBY_RUBY_REFLEXPR_H_
+#ifndef RUBY_RUBY_REFLEXPR_RUBY_REFLEXPR_H_
+#define RUBY_RUBY_REFLEXPR_RUBY_REFLEXPR_H_
 #pragma once
 
 #include <string>
@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <regex>
 
-namespace reflexpr
+namespace ruby_reflexpr
 {
 	/// <summary>
 	/// Satisifes std::is_aggregate
@@ -162,7 +162,7 @@ namespace reflexpr
 	struct member_count;
 }
 
-namespace reflexpr
+namespace ruby_reflexpr
 {
 	class _reflexpr
 	{
@@ -185,21 +185,21 @@ namespace reflexpr
 
 	public:
 		template<aggregate T, class Pred>
-		static void for_each_member_variable(T& obj, Pred&& pred) 
+		static void for_each_member_variable(T& obj, Pred&& pred)
 		{
 			auto r = type_info_.find(std::type_index(typeid(T)));
 			if (r == std::end(type_info_))
 				throw std::logic_error(std::string("reflexpr: Trying to use not reflected type: ") + typeid(T).name());
 
 			const auto& type = r->second;
-			
-			auto func = [index = static_cast<size_t>(0llu), &type, &pred]<class T>(T & v) mutable 
+
+			auto func = [index = static_cast<size_t>(0llu), &type, &pred]<class T>(T & v) mutable
 			{
 				std::invoke(pred, v, type.member_variables[index].name);
 				++index;
 			};
 
-			::reflexpr::for_each_member_variable(obj, func);
+			::ruby_reflexpr::for_each_member_variable(obj, func);
 		};
 
 	private:
@@ -258,17 +258,17 @@ namespace reflexpr
 			T temp{};
 			auto address = std::bit_cast<ptrdiff_t>(std::addressof(temp));
 			auto& type = type_info_[std::type_index(typeid(T))];
-			
-			auto func = [index = static_cast<size_t>(0llu), &type, address]<class U>(U& v) mutable 
+
+			auto func = [index = static_cast<size_t>(0llu), &type, address]<class U>(U & v) mutable
 			{
 				type.member_variables[index].type_index = std::type_index(typeid(U));
 				type.member_variables[index].offset = std::bit_cast<ptrdiff_t>(std::addressof(v)) - address;
 				++index;
 			};
-			
-			::reflexpr::for_each_member_variable<T>(temp, func);
+
+			::ruby_reflexpr::for_each_member_variable<T>(temp, func);
 		}
-	
+
 	public:
 		template<aggregate  T>
 		static size_t type_register_proxy(std::string contents)
@@ -305,9 +305,9 @@ namespace reflexpr
 
 		constexpr static auto value = f(nullptr);
 	};
-	
+
 	template<aggregate T, class Pred>
-	void for_each_member_variable (T& obj, Pred&& pred)
+	void for_each_member_variable(T& obj, Pred&& pred)
 	{
 		static constexpr size_t size = member_count<T>::value;
 
@@ -406,18 +406,233 @@ namespace reflexpr
 			std::invoke(pred, v8);
 			std::invoke(pred, v9);
 		}
+		else if constexpr (size == 11)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+		}
+		else if constexpr (size == 12)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+		}
+		else if constexpr (size == 13)
+			{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+		}
+		else if constexpr (size == 14)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+		}
+		else if constexpr (size == 15)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+		}
+		else if constexpr (size == 16)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+		}
+		else if constexpr (size == 16)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+		}
+		else if constexpr (size == 17)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+		}
+		else if constexpr (size == 18)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+			std::invoke(pred, v17);
+		}
+		else if constexpr (size == 19)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+			std::invoke(pred, v17);
+			std::invoke(pred, v18);
+		}
+		else if constexpr (size == 20)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+			std::invoke(pred, v17);
+			std::invoke(pred, v18);
+			std::invoke(pred, v19);
+		}
 		else
 		{
 			static_assert(false, "Unsupported number of struct members");
 		}
 	};
-	
+
 	template<std::default_initializable T, class Pred>
 	void for_each_member_type(Pred&& pred)
 	{
-		auto proxy = [&pred]<class U>(U& v) -> void
+		auto proxy = [&pred]<class U>(U & v) -> void
 		{
-			pred.template operator()<U>();
+			pred.template operator() < U > ();
 		};
 
 		auto v = T{};
@@ -433,7 +648,7 @@ namespace reflexpr
 	template<std::default_initializable T, class Pred>
 	void for_each_reflected_member_type(Pred&& pred)
 	{
-		auto proxy = [&pred]<class U>(U & v, const std::string& name) -> void
+		auto proxy = [&pred]<class U>(U & v, const std::string & name) -> void
 		{
 			pred.template operator() < U > (name);
 		};
@@ -450,6 +665,6 @@ namespace reflexpr
 
 #define REFLECT(...) typedef __VA_ARGS__ _REFLECT_IDENTIFIER(__LINE__)##_t;\
 	static size_t _REFLECT_IDENTIFIER(__LINE__)##_proxy = \
-		::reflexpr::_reflexpr::type_register_proxy<_REFLECT_IDENTIFIER(__LINE__)##_t>(#__VA_ARGS__);\
+		::ruby_reflexpr::_reflexpr::type_register_proxy<_REFLECT_IDENTIFIER(__LINE__)##_t>(#__VA_ARGS__);\
 
 #endif

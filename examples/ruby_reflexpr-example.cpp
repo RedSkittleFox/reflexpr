@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <string>
 
-#include "ruby_reflexpr.hpp"
+#include <ruby_reflexpr\ruby_reflexpr.hpp>
 
 struct aggregate_type
 {
@@ -51,7 +51,7 @@ int main()
 
 		aggregate_type at{ 1 , 3.5f, "Foxes are great!" };
 		
-		reflexpr::for_each_member_variable(at, func);
+		ruby_reflexpr::for_each_member_variable(at, func);
 		std::cout << '\n';
 	}
 
@@ -59,7 +59,7 @@ int main()
 	{
 		std::cout << "For each member type:\n";
 
-		reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
+		ruby_reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
 		std::cout << '\n';
 	}
 
@@ -73,7 +73,7 @@ int main()
 
 		aggregate_type_reflected at{ 1 , 3.5f, "Foxes are great!" };
 
-		reflexpr::for_each_reflected_member_variable(at, func);
+		ruby_reflexpr::for_each_reflected_member_variable(at, func);
 		std::cout << '\n';
 	}
 
@@ -81,7 +81,7 @@ int main()
 	{
 		std::cout << "For each member type reflected:\n";
 
-		reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
+		ruby_reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
 		std::cout << '\n';
 	}
 	
