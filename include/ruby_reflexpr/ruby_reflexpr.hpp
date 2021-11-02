@@ -22,6 +22,7 @@
 #include <concepts>
 #include <algorithm>
 #include <regex>
+#include <cassert>
 
 namespace ruby_reflexpr
 {
@@ -249,7 +250,7 @@ namespace ruby_reflexpr
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << e.what() << '\n';
+			assert(false && "ruby_reflexpr: Something went horribly wrong.");
 		};
 
 		template<class T>
