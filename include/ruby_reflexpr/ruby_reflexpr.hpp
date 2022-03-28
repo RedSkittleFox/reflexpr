@@ -624,7 +624,7 @@ namespace ruby_reflexpr
 		}
 		else
 		{
-			static_assert(false, "Unsupported number of struct members");
+			static_assert(size <= 20, "Unsupported number of struct members");
 		}
 	};
 
