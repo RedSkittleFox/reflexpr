@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <regex>
 #include <cassert>
+#include <functional>
 
 namespace ruby_reflexpr
 {
@@ -194,7 +195,7 @@ namespace ruby_reflexpr
 
 			const auto& type = r->second;
 
-			auto func = [index = static_cast<size_t>(0llu), &type, &pred]<class T>(T & v) mutable
+			auto func = [index = static_cast<size_t>(0llu), &type, &pred]<class U>(U & v) mutable
 			{
 				std::invoke(pred, v, type.member_variables[index].name);
 				++index;
