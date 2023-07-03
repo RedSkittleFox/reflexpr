@@ -60,6 +60,31 @@ namespace ruby_reflexpr
 	void for_each_member_variable(T& obj, Pred&& pred);
 
 	/// <summary>
+	/// Iterates over every member variable of an aggregate 
+	/// </summary>
+	/// <typeparam name="T">Aggregate's Type</typeparam>
+	/// <typeparam name="Pred">Predicate's Type</typeparam>
+	/// <param name="obj">Aggregate to iterate over</param>
+	/// <param name="pred">Predicate that iterates over object. Requires to be invocable with T&, where T is a member type of an aggregate.</param>
+	/// <example>
+	///		void foo()
+	///		{
+	///			std::cout << "For each member variable:\n";
+	///			auto func = []<class T>(T & v)
+	///			{
+	///				std::cout << "Type: " << typeid(T).name() << " Value: " << v << '\n';
+	///			};
+	///			
+	///			aggregate_type at{ 1 , 3.5f, "Foxes are great!" };
+	///			
+	///			reflexpr::for_each_member_variable(at, func);
+	///			std::cout << '\n';
+	///		}
+	/// </example>
+	template<aggregate T, class Pred>
+	void for_each_member_variable(const T& obj, Pred&& pred);
+
+	/// <summary>
 	/// Iterates over every member variable's type of an aggregate
 	/// </summary>
 	/// <typeparam name="T">Aggregate's Type</typeparam>
@@ -441,6 +466,327 @@ namespace ruby_reflexpr
 		}
 		else if constexpr (size == 13)
 			{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+		}
+		else if constexpr (size == 14)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+		}
+		else if constexpr (size == 15)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+		}
+		else if constexpr (size == 16)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+		}
+		else if constexpr (size == 16)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+		}
+		else if constexpr (size == 17)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+		}
+		else if constexpr (size == 18)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+			std::invoke(pred, v17);
+		}
+		else if constexpr (size == 19)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+			std::invoke(pred, v17);
+			std::invoke(pred, v18);
+		}
+		else if constexpr (size == 20)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+			std::invoke(pred, v12);
+			std::invoke(pred, v13);
+			std::invoke(pred, v14);
+			std::invoke(pred, v15);
+			std::invoke(pred, v16);
+			std::invoke(pred, v17);
+			std::invoke(pred, v18);
+			std::invoke(pred, v19);
+		}
+		else
+		{
+			static_assert(size <= 20, "Unsupported number of struct members");
+		}
+	};
+
+	template<aggregate T, class Pred>
+	void for_each_member_variable(const T& obj, Pred&& pred)
+	{
+		static constexpr size_t size = member_count<T>::value;
+
+		if constexpr (size == 1)
+		{
+			auto& [v0] = obj;
+			std::invoke(pred, v0);
+		}
+		else if constexpr (size == 2)
+		{
+			auto& [v0, v1] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+		}
+		else if constexpr (size == 3)
+		{
+			auto& [v0, v1, v2] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+		}
+		else if constexpr (size == 4)
+		{
+			auto& [v0, v1, v2, v3] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+		}
+		else if constexpr (size == 5)
+		{
+			auto& [v0, v1, v2, v3, v4] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+		}
+		else if constexpr (size == 6)
+		{
+			auto& [v0, v1, v2, v3, v4, v5] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+		}
+		else if constexpr (size == 7)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+		}
+		else if constexpr (size == 8)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+		}
+		else if constexpr (size == 9)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+		}
+		else if constexpr (size == 10)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+		}
+		else if constexpr (size == 11)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+		}
+		else if constexpr (size == 12)
+		{
+			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11] = obj;
+			std::invoke(pred, v0);
+			std::invoke(pred, v1);
+			std::invoke(pred, v2);
+			std::invoke(pred, v3);
+			std::invoke(pred, v4);
+			std::invoke(pred, v5);
+			std::invoke(pred, v6);
+			std::invoke(pred, v7);
+			std::invoke(pred, v8);
+			std::invoke(pred, v9);
+			std::invoke(pred, v10);
+			std::invoke(pred, v11);
+		}
+		else if constexpr (size == 13)
+		{
 			auto& [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12] = obj;
 			std::invoke(pred, v0);
 			std::invoke(pred, v1);
