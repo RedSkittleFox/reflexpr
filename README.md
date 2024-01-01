@@ -1,13 +1,15 @@
 # ruby-reflexpr
-is a c++20 compile and runtime Struct Reflections header only library. It allows you to iterate over aggregate type's member variables.
+is a c++20 compile and runtime aggregate reflections header only library. It allows you to iterate over aggregate type's member variables.
 
 # Example Usage
 ```cpp
 // demo.cpp
 #include <iostream>
+#include <string_view>
+#include <algorithm>
 #include <string>
 
-#include "ruby_reflexpr.hpp"
+#include <fox/reflexpr.hpp>
 
 struct aggregate_type
 {
@@ -31,7 +33,7 @@ struct functor
 	void operator()() const
 	{
 		std::cout << "Type: " << typeid(T).name() << '\n';
-	};
+	}
 };
 
 struct functor_reflected
@@ -40,12 +42,12 @@ struct functor_reflected
 	void operator()(const std::string& name) const
 	{
 		std::cout << "Name: " << name << " Type: " << typeid(T).name() << '\n';
-	};
+	}
 };
 
 int main()
 {
-	// DEMO: reflexpr::for_each_member_variable
+	// DEMO: fox::reflexpr::for_each_member_variable
 	{
 		std::cout << "For each member variable:\n";
 		auto func = []<class T>(T & v)
@@ -54,20 +56,21 @@ int main()
 		};
 
 		aggregate_type at{ 1 , 3.5f, "Foxes are great!" };
-		
-		reflexpr::for_each_member_variable(at, func);
+
+		static_assert(fox::reflexpr::aggregate<aggregate_type>, "sus");
+		fox::reflexpr::for_each_member_variable(at, func);
 		std::cout << '\n';
 	}
 
-	// DEMO: reflexpr::for_each_member_type
+	// DEMO: fox::reflexpr::for_each_member_type
 	{
 		std::cout << "For each member type:\n";
 
-		reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
+		fox::reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
 		std::cout << '\n';
 	}
 
-	// DEMO: reflexpr::for_each_reflected_member_variable
+	// DEMO: fox::reflexpr::for_each_reflected_member_variable
 	{
 		std::cout << "For each member variable reflected:\n";
 		auto func = []<class T>(T & v, const std::string& name)
@@ -77,29 +80,25 @@ int main()
 
 		aggregate_type_reflected at{ 1 , 3.5f, "Foxes are great!" };
 
-		reflexpr::for_each_reflected_member_variable(at, func);
+		fox::reflexpr::for_each_reflected_member_variable(at, func);
 		std::cout << '\n';
 	}
 
-	// DEMO: reflexpr::for_each_reflected_member_type
+	// DEMO: fox::reflexpr::for_each_reflected_member_type
 	{
 		std::cout << "For each member type reflected:\n";
 
-		reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
+		fox::reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
 		std::cout << '\n';
 	}
 	
-	return 0;
+	return 1;
 }
 ```
 
 # Planned Improvements
-*  Increasing member variable limit to 30
-*  Introducting `noreflect` specifier.
-*  Improving member variable names parsing.
-
+*	Improving member variable names parsing.
+*	Write unit tests.
+	
 # Limitation
-Right now it supports only up to 20 member variables and introduces small runtime overhead when registering member variable names.
-
-# Extra Notice
-This library is part of Ruby ecosystem created and managed by RedSkittleFox. Not all headers are avialable. This header is standalone.
+Right now it supports only up to 40 member variables and introduces small runtime overhead when registering member variable names.

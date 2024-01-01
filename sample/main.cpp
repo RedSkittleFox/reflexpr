@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <string>
 
-#include <ruby_reflexpr\ruby_reflexpr.hpp>
+#include <fox/reflexpr.hpp>
 
 struct aggregate_type
 {
@@ -27,7 +27,7 @@ struct functor
 	void operator()() const
 	{
 		std::cout << "Type: " << typeid(T).name() << '\n';
-	};
+	}
 };
 
 struct functor_reflected
@@ -36,12 +36,12 @@ struct functor_reflected
 	void operator()(const std::string& name) const
 	{
 		std::cout << "Name: " << name << " Type: " << typeid(T).name() << '\n';
-	};
+	}
 };
 
 int main()
 {
-	// DEMO: reflexpr::for_each_member_variable
+	// DEMO: fox::reflexpr::for_each_member_variable
 	{
 		std::cout << "For each member variable:\n";
 		auto func = []<class T>(T & v)
@@ -50,20 +50,21 @@ int main()
 		};
 
 		aggregate_type at{ 1 , 3.5f, "Foxes are great!" };
-		
-		ruby_reflexpr::for_each_member_variable(at, func);
+
+		static_assert(fox::reflexpr::aggregate<aggregate_type>, "sus");
+		fox::reflexpr::for_each_member_variable(at, func);
 		std::cout << '\n';
 	}
 
-	// DEMO: reflexpr::for_each_member_type
+	// DEMO: fox::reflexpr::for_each_member_type
 	{
 		std::cout << "For each member type:\n";
 
-		ruby_reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
+		fox::reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
 		std::cout << '\n';
 	}
 
-	// DEMO: reflexpr::for_each_reflected_member_variable
+	// DEMO: fox::reflexpr::for_each_reflected_member_variable
 	{
 		std::cout << "For each member variable reflected:\n";
 		auto func = []<class T>(T & v, const std::string& name)
@@ -73,15 +74,15 @@ int main()
 
 		aggregate_type_reflected at{ 1 , 3.5f, "Foxes are great!" };
 
-		ruby_reflexpr::for_each_reflected_member_variable(at, func);
+		fox::reflexpr::for_each_reflected_member_variable(at, func);
 		std::cout << '\n';
 	}
 
-	// DEMO: reflexpr::for_each_reflected_member_type
+	// DEMO: fox::reflexpr::for_each_reflected_member_type
 	{
 		std::cout << "For each member type reflected:\n";
 
-		ruby_reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
+		fox::reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
 		std::cout << '\n';
 	}
 	
