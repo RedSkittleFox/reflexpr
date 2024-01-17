@@ -55,4 +55,4 @@ int main()
 ```
 
 # Limitation
-Right now it supports only up to 40 member variables and introduces small runtime overhead when registering member variable names.
+Right now it supports only up to 40 member variables.
