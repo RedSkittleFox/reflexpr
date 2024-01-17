@@ -11,6 +11,7 @@
 #define FOX_REFLEXPR_REFLEXPR_H_
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 #include <unordered_map>
