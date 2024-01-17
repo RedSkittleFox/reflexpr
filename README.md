@@ -1,4 +1,4 @@
-[![CMake MSVC Build and Test](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-msvc-build.yml/badge.svg)](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-msvc-build.yml)
+[![CMake on multiple platforms](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-multi-platform.yml)
 
 # reflexpr
 is a c++20 compile and runtime aggregate reflections header only library. It allows you to iterate over aggregate type's member variables.
