@@ -1,17 +1,14 @@
-/// This header is part of Ruby Ecosystem distributed under MIT license.
+/// This header is distributed under MIT license.
 ///
 /// Author:			Marcin Poloczek (aka. RedSkittleFox)
 ///	Contact:		RedSkittleFox@gmail.com
 /// Copyright:		Marcin Poloczek
 /// License:		MIT
-/// Version:		2.0.0
+/// Version:		3.0.0
 ///
-/// TODO:
-///		* Improve struct parsing.
-///		* Introduce noreflect keyword
-///		
-#ifndef FOX_REFLEXPR_RUBY_REFLEXPR_H_
-#define FOX_REFLEXPR_RUBY_REFLEXPR_H_
+
+#ifndef FOX_REFLEXPR_REFLEXPR_H_
+#define FOX_REFLEXPR_REFLEXPR_H_
 #pragma once
 
 #include <string>
@@ -25,409 +22,342 @@
 #include <cassert>
 #include <functional>
 #include <type_traits>
+#include <tuple>
+#include <limits>
+#include <utility>
 
 namespace fox::reflexpr
 {
-	/// <summary>
-	/// Satisifes std::is_aggregate
-	/// https://en.cppreference.com/w/cpp/types/is_aggregate
-	/// </summary>
 	template<class T>
 	concept aggregate = std::is_aggregate_v<std::remove_cvref_t<T>>;
-
-	/// <summary>
-	/// Iterates over every member variable of an aggregate 
-	/// </summary>
-	/// <typeparam name="T">Aggregate's Type</typeparam>
-	/// <typeparam name="Pred">Predicate's Type</typeparam>
-	/// <param name="obj">Aggregate to iterate over</param>
-	/// <param name="pred">Predicate that iterates over object. Requires to be invocable with T&, where T is a member type of an aggregate.</param>
-	/// <example>
-	///		void foo()
-	///		{
-	///			std::cout << "For each member variable:\n";
-	///			auto func = []<class T>(T & v)
-	///			{
-	///				std::cout << "Type: " << typeid(T).name() << " Value: " << v << '\n';
-	///			};
-	///			
-	///			aggregate_type at{ 1 , 3.5f, "Foxes are great!" };
-	///			
-	///			reflexpr::for_each_member_variable(at, func);
-	///			std::cout << '\n';
-	///		}
-	/// </example>
-	template<aggregate T, class Pred>
-	void for_each_member_variable(T&& obj, Pred&& pred);
-
-	/// <summary>
-	/// Iterates over every member variable's type of an aggregate
-	/// </summary>
-	/// <typeparam name="T">Aggregate's Type</typeparam>
-	/// <typeparam name="Pred">Predicate's Type</typeparam>
-	/// <param name="pred">Predicate that iterates over object. Invocable as pred.operator()<T>(),
-	/// where T is a member type of an aggregate.</param>
-	/// <example>
-	///		struct functor
-	///		{
-	///			template<class T>
-	///			void operator()() const
-	///			{
-	///				std::cout << "Type: " << typeid(T).name() << '\n';
-	///			};
-	///		};
-	/// 
-	///		void foo()
-	///		{
-	///			std::cout << "For each member type:\n";
-	///			reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
-	///			std::cout << '\n';
-	///		}
-	/// </example>
-	template<std::default_initializable T, class Pred>
-	void for_each_member_type(Pred&& pred);
-
-	/// <summary>
-	/// Iterates over every member variable of an aggregate 
-	/// </summary>
-	/// <typeparam name="T">Reflected Aggregate's Type</typeparam>
-	/// <typeparam name="Pred">Predicate's Type</typeparam>
-	/// <param name="obj">Aggregate to iterate over</param>
-	/// <param name="pred">Predicate that iterates over object. Requires to be invocable with T& and const std::string&, where T is a member type of an aggregate.</param>
-	/// <example>
-	///
-	///		REFLECT(
-	///		struct aggregate_type_reflected
-	///		{
-	///			int a;
-	///			float b;
-	///			std::string str;
-	///		}
-	///		);
-	///		void foo()
-	///		{
-	///			std::cout << "For each member variable reflected:\n";
-	///			auto func = []<class T>(T & v, const std::string & name)
-	///			{
-	///				std::cout << "Name: " << name << " Type: " << typeid(T).name() << " Value: " << v << '\n';
-	///			};
-	///			
-	///			aggregate_type_reflected at{ 1 , 3.5f, "Foxes are great!" };
-	///			
-	///			reflexpr::for_each_reflected_member_variable(at, func);
-	///			std::cout << '\n';
-	///		}
-	/// </example>
-	template<aggregate T, class Pred>
-	void for_each_reflected_member_variable(T& obj, Pred&& pred);
-
-	/// <summary>
-	/// Iterates over every member variable's type of an aggregate
-	/// </summary>
-	/// <typeparam name="T">Reflected Aggregate's Type</typeparam>
-	/// <typeparam name="Pred">Predicate's Type</typeparam>
-	/// <param name="pred">Predicate that iterates over object. Invocable as pred.operator()<T>(const std::string&),
-	/// where T is a member type of an aggregate.</param>
-	/// <example>
-	///		REFLECT(
-	///		struct aggregate_type_reflected
-	///		{
-	///			int a;
-	///			float b;
-	///			std::string str;
-	///		}
-	///		);
-	///
-	///		struct functor_reflected
-	///		{
-	///			template<class T>
-	///			void operator()(const std::string& name) const
-	///			{
-	///				std::cout << "Name: " << name << " Type: " << typeid(T).name() << '\n';
-	///			};
-	///		};
-	///		
-	///		void foo()
-	///		{
-	///			std::cout << "For each member type reflected:\n";
-	///			reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
-	///			std::cout << '\n';
-	///		}
-	/// </example>
-	template<aggregate T, class Pred>
-	void for_each_reflected_member_type(Pred&& pred);
-
-	/// <summary>
-	/// Calculates compile time number of member variables
-	/// </summary>
-	/// <typeparam name="T">Aggregate Type</typeparam>
-	template<aggregate T>
-	struct member_count;
 }
+
+#define FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS (static_cast<std::size_t>(40))
 
 namespace fox::reflexpr
 {
-	class _reflexpr
+	namespace details
 	{
-		struct _member_variable_t
+		// This is a nasty work-around that makes counting members of aggregates of 
+		// references possible. We iterate over all configurations from N to 0 and check if they
+		// satisfy aggregate initialization. If we reach zero, we check if type is empty, if not, then that means 
+		// there are more members than selected N. We could transfer initial size and increase it, but 
+		// picking a sane value like 30 should satisfy 90% of cases.
+		template<size_t I>
+		struct to_any_type_reference
 		{
-			std::string name;
-			std::type_index type_index = std::type_index(typeid(void));
-			std::ptrdiff_t offset;
+			template<class T>
+			constexpr operator T& ();
 		};
 
-		struct _type_t
+		template<class T, class, size_t... I>
+		struct member_construct_helper_1 : std::false_type {};
+
+		template<class T, size_t... I>
+		struct member_construct_helper_1 < T, std::void_t<decltype(
+			T{ std::declval<to_any_type_reference<I>>()... }
+		) > , I... > : std::true_type {};
+
+		template<class T, class IndexList>
+		struct member_counter_helper_2;
+
+		template<class T, size_t... I>
+		struct member_counter_helper_2<T, std::index_sequence<I...>>
+			: member_construct_helper_1<T, void, I...> {};
+
+		template<class T, size_t Size>
+		struct member_counter_helper_3
+			: member_counter_helper_2<T, std::make_index_sequence<Size>> {};
+
+		template<class T, size_t I>
+		struct member_counter_helper_4
 		{
-			std::string name;
-			std::type_index type_index = std::type_index(typeid(void));
-			std::vector<_member_variable_t> member_variables;
-		};
-
-	private:
-		inline static std::unordered_map<std::type_index, _type_t> type_info_;
-
-	public:
-		template<aggregate T, class Pred>
-		static void for_each_member_variable(T& obj, Pred&& pred)
-		{
-			auto r = type_info_.find(std::type_index(typeid(T)));
-			if (r == std::end(type_info_))
-				throw std::logic_error(std::string("reflexpr: Trying to use not reflected type: ") + typeid(T).name());
-
-			const auto& type = r->second;
-
-			auto func = [index = static_cast<size_t>(0llu), &type, &pred]<class U>(U&& v) mutable
-			{
-				std::invoke(pred, std::forward<U>(v), type.member_variables[index].name);
-				++index;
-			};
-
-			::fox::reflexpr::for_each_member_variable(obj, func);
-		};
-
-	private:
-		inline static size_t counter_ = 0;
-
-		template<class T>
-		static void type_register_member_variable_names_(std::string contents) try
-		{
-			// get to the inside of the struct
-			contents = std::string(std::find(std::begin(contents), std::end(contents), '{') + 1, std::end(contents) - 1);
-
-			static const std::string member_var_pattern =
-				R"(([a-zA-Z_]+\w*(?=\s*;)))";
-
-			static const std::regex member_var_exp(member_var_pattern,
-				std::regex::ECMAScript | std::regex::optimize);
-
-			static const std::string comment_pattern =
-				R"(((?:\/\*)[\w\s]*(?:\*\/))|((?:\/\/)[\w\s]*\n))";
-
-			static const std::regex comment_exp(comment_pattern,
-				std::regex::ECMAScript | std::regex::optimize);
-
-			static const std::string remove_initializations_pattern
-				= R"((\=\s*\{[\w\s,.=\{\}]*\})|(\s*\{[\w\s,.=\{\}]*\})|(=\s*[\w\s,.=\{\}]*))";
-
-			static const std::regex remove_initializations_exp(remove_initializations_pattern,
-				std::regex::ECMAScript | std::regex::optimize);
-
-			// Remove comments
-			contents = std::regex_replace(contents, comment_exp, "\n");
-			contents = std::regex_replace(contents, remove_initializations_exp, "\n");
-
-			// Find member variables
-			auto match = std::sregex_iterator(
-				std::begin(contents), std::end(contents), member_var_exp);
-
-			auto& type = type_info_[std::type_index(typeid(T))];
-
-			for (auto rng = std::ranges::subrange(match, std::sregex_iterator());
-				auto & e : rng)
-			{
-				type.member_variables.push_back(_member_variable_t{ e.str() });
-			}
-
-			// type.member_variables.shrink_to_fit();
-		}
-		catch (const std::exception& e)
-		{
-			assert(false && "ruby_reflexpr: Something went horribly wrong.");
+			static constexpr size_t value =
+				member_counter_helper_3<T, I>::value ?
+				I : member_counter_helper_4<T, I - 1>::value;
 		};
 
 		template<class T>
-		static void type_register_member_variable_type_infos_()
+		struct member_counter_helper_4<T, 0>
 		{
-			T temp{};
-			auto address = std::bit_cast<ptrdiff_t>(std::addressof(temp));
-			auto& type = type_info_[std::type_index(typeid(T))];
+			static constexpr size_t value =
+				std::is_empty_v<T> ?
+				0 : std::numeric_limits<size_t>::max();
+		};
+	}
 
-			auto func = [index = static_cast<size_t>(0llu), &type, address]<class U>(U & v) mutable
-			{
-				type.member_variables[index].type_index = std::type_index(typeid(U));
-				type.member_variables[index].offset = std::bit_cast<ptrdiff_t>(std::addressof(v)) - address;
-				++index;
-			};
-
-			::fox::reflexpr::for_each_member_variable(temp, func);
-		}
-
-	public:
-		template<aggregate  T>
-		static size_t type_register_proxy(std::string contents)
-		{
-			if (type_info_.contains(typeid(T)))
-				return ++counter_;
-
-			type_register_member_variable_names_<T>(contents);
-			type_register_member_variable_type_infos_<T>();
-
-			return ++counter_;
-		}
-	};
-
-	struct _any_type
-	{
-		template<class T>
-		operator T() {}
-	};
-
-	template<aggregate T, class... Args>
-	struct _member_count
-	{
-		constexpr static size_t f(int32_t*)
-		{
-			return sizeof...(Args) - 1;
-		}
-
-		template<class U = T, class Enabled = decltype(U{ Args{}... }) >
-		constexpr static size_t f(std::nullptr_t)
-		{
-			return _member_count<T, Args..., _any_type>::value;
-		}
-
-		constexpr static auto value = f(nullptr);
-	};
-
+	/**
+	 * \brief		Provides access to the number of elements in a tuple as a compile-time constant expression.
+	 * \tparam T	Aggregate type
+	 */
 	template<aggregate T>
-	struct member_count
+	struct tuple_size :
+		::fox::reflexpr::details::member_counter_helper_4<std::remove_cvref_t<T>, FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS> {};
+
+	/**
+	 * \brief		Helper variable template. Provides access to the number of elements in a tuple as a compile-time constant expression.
+	 * \tparam T	Aggregate type
+	 */
+	template<class T>
+	static constexpr std::size_t tuple_size_v = tuple_size<T>::value;
+
+	namespace details
 	{
-		constexpr static std::size_t value = _member_count<std::remove_cvref_t<T>>::value;
-	};
+		template<std::size_t I, std::size_t J>
+		struct to_any_type_reference_if_not_j
+		{
+			template<class T>
+			constexpr operator T& ();
+		};
+
+		template<std::size_t I>
+		struct to_any_type_reference_if_not_j<I, I>
+		{
+			template<class T>
+			constexpr operator T ();
+		};
+
+		template<class T, class, std::size_t I, std::size_t... Is>
+		struct is_nth_a_reference_helper_1 : std::false_type {};
+
+		template<class T, std::size_t I, std::size_t... Is>
+		struct is_nth_a_reference_helper_1 < T, std::void_t<decltype(
+			T{ std::declval<to_any_type_reference_if_not_j<I, Is>>()... }
+		) > , I, Is... > : std::true_type {};
+
+		template<class T, std::size_t I, class>
+		struct is_nth_a_reference_helper_2;
+
+		template<class T, std::size_t I, std::size_t... Is>
+		struct is_nth_a_reference_helper_2<T, I, std::index_sequence<Is...>> :
+			is_nth_a_reference_helper_1<T, void, I, Is...> {};
+
+		template<class T, std::size_t I>
+		struct is_nth_a_reference : is_nth_a_reference_helper_2<T, I, std::make_index_sequence<::fox::reflexpr::tuple_size_v<T>>> {};
+
+		template<class T, class>
+		struct ref_detector_helper_1;
+
+		template<class T, std::size_t... Is>
+		struct ref_detector_helper_1<T, std::index_sequence<Is...>>
+		{
+			static constexpr std::array<bool, ::fox::reflexpr::tuple_size_v<T>> nth_reference{ std::negation_v<is_nth_a_reference<T, Is>>... };
+		};
+
+		template<class T>
+		struct ref_detector : ref_detector_helper_1<std::remove_cvref_t<T>, std::make_index_sequence<::fox::reflexpr::tuple_size_v<T>>> {};
+	}
 
 #ifdef FOX_REFLEXPR_UNPACK_APPLY
 #pragma message "FOX_REFLEXPR_UNPACK_APPLY macro is internally used by redskittlefox/reflexpr library"
 #undef FOX_REFLEXPR_UNPACK_APPLY
 #endif
 
+#ifdef FOX_REFLEXPR_UNPACK_ALL
+#pragma message "FOX_REFLEXPR_UNPACK_ALL macro is internally used by redskittlefox/reflexpr library"
+#undef FOX_REFLEXPR_UNPACK_ALL
+#endif
+
 #define FOX_REFLEXPR_UNPACK_APPLY(SIZE, ...)			\
 	if constexpr ( size == SIZE )		\
 	{									\
 		auto&& [__VA_ARGS__] = obj;		\
-		apply_pack( std::in_place_index< SIZE >,  __VA_ARGS__ ); \
+		return apply_pack( std::in_place_index< SIZE >, __VA_ARGS__ ); \
 	}
 
-	template<aggregate T, class Pred>
-	void for_each_member_variable(T&& obj, Pred&& pred)
+#define FOX_REFLEXPR_UNPACK_ALL	\
+	FOX_REFLEXPR_UNPACK_APPLY( 1, v0) \
+	FOX_REFLEXPR_UNPACK_APPLY( 2, v0, v1) \
+	FOX_REFLEXPR_UNPACK_APPLY( 3, v0, v1, v2) \
+	FOX_REFLEXPR_UNPACK_APPLY( 4, v0, v1, v2, v3) \
+	FOX_REFLEXPR_UNPACK_APPLY( 5, v0, v1, v2, v3, v4) \
+	FOX_REFLEXPR_UNPACK_APPLY( 6, v0, v1, v2, v3, v4, v5) \
+	FOX_REFLEXPR_UNPACK_APPLY( 7, v0, v1, v2, v3, v4, v5, v6) \
+	FOX_REFLEXPR_UNPACK_APPLY( 8, v0, v1, v2, v3, v4, v5, v6, v7) \
+	FOX_REFLEXPR_UNPACK_APPLY( 9, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
+	FOX_REFLEXPR_UNPACK_APPLY(10, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) \
+	FOX_REFLEXPR_UNPACK_APPLY(11, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) \
+	FOX_REFLEXPR_UNPACK_APPLY(12, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) \
+	FOX_REFLEXPR_UNPACK_APPLY(13, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12) \
+	FOX_REFLEXPR_UNPACK_APPLY(14, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13) \
+	FOX_REFLEXPR_UNPACK_APPLY(15, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14) \
+	FOX_REFLEXPR_UNPACK_APPLY(16, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15) \
+	FOX_REFLEXPR_UNPACK_APPLY(17, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16) \
+	FOX_REFLEXPR_UNPACK_APPLY(18, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17) \
+	FOX_REFLEXPR_UNPACK_APPLY(19, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18) \
+	FOX_REFLEXPR_UNPACK_APPLY(20, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19) \
+	FOX_REFLEXPR_UNPACK_APPLY(21, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20) \
+	FOX_REFLEXPR_UNPACK_APPLY(22, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21) \
+	FOX_REFLEXPR_UNPACK_APPLY(23, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) \
+	FOX_REFLEXPR_UNPACK_APPLY(24, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23) \
+	FOX_REFLEXPR_UNPACK_APPLY(25, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24) \
+	FOX_REFLEXPR_UNPACK_APPLY(26, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25) \
+	FOX_REFLEXPR_UNPACK_APPLY(27, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26) \
+	FOX_REFLEXPR_UNPACK_APPLY(28, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27) \
+	FOX_REFLEXPR_UNPACK_APPLY(29, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28) \
+	FOX_REFLEXPR_UNPACK_APPLY(30, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29) \
+	FOX_REFLEXPR_UNPACK_APPLY(31, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30) \
+	FOX_REFLEXPR_UNPACK_APPLY(32, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31) \
+	FOX_REFLEXPR_UNPACK_APPLY(33, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32) \
+	FOX_REFLEXPR_UNPACK_APPLY(34, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33) \
+	FOX_REFLEXPR_UNPACK_APPLY(35, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34) \
+	FOX_REFLEXPR_UNPACK_APPLY(36, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35) \
+	FOX_REFLEXPR_UNPACK_APPLY(37, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36) \
+	FOX_REFLEXPR_UNPACK_APPLY(38, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37) \
+	FOX_REFLEXPR_UNPACK_APPLY(39, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38) \
+	FOX_REFLEXPR_UNPACK_APPLY(40, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39) 
+
+	/**
+	 * \brief	Allows iteration over all members of an aggregate type.
+	 * \tparam T Aggregate type
+	 * \tparam Func Function type
+	 * \param obj Object to iterate over members of.
+	 * \param func Functor invoked for each member.
+	 */
+	template<aggregate T, class Func>
+	constexpr void for_each(T&& obj, Func&& func)
 	{
-		static constexpr size_t size = member_count<T>::value;
+		constexpr size_t size = tuple_size_v<T>;
+		static_assert(size <= FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS, "Unsupported number of struct members");
+
+		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args) -> void
+		{
+			static_assert(I == sizeof...(Args) && "Size and Arguments mismatch.");
+			if constexpr(std::is_lvalue_reference_v<decltype(obj)> && std::is_const_v<std::remove_reference_t<decltype(obj)>>)
+			{
+				(func(std::as_const(std::forward<Args>(args))), ...);
+			}
+			else
+			{
+				(func(std::forward<Args>(args)), ...);
+			}
+		};
+
+		FOX_REFLEXPR_UNPACK_ALL
+	};
+
+	/**
+	 * \brief Creates a tuple of lvalue references to members of an aggregate.
+	 * \tparam T Aggregate type
+	 * \param obj Object to make a tie of.
+	 * \return A std::tuple object containing lvalue references.
+	 */
+	template<aggregate T>
+	constexpr auto tie(T& obj)
+	{
+		constexpr size_t size = tuple_size_v<T>;
+		static_assert(size <= FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS, "Unsupported number of struct members");
 
 		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args)
 		{
 			static_assert(I == sizeof...(Args) && "Size and Arguments mismatch.");
-			auto invoke_proxy = [&]<class U>(U && arg) -> void
+			if constexpr(std::is_const_v<T>)
 			{
-				static_assert(std::is_invocable_v<decltype(pred), decltype(arg)>, "Function is not invokable with type [U]");
-				pred( std::forward<U>(arg) );
-			};
-
-			( invoke_proxy(std::forward<Args>(args) ) , ...);
+				return std::tuple<std::add_lvalue_reference_t<std::add_const_t<std::remove_cvref_t<Args>>>...>{ std::forward<Args>(args)...};
+			}
+			else
+			{
+				return std::tuple<Args&...>{ std::forward<Args>(args)...};
+			}
 		};
 
-		FOX_REFLEXPR_UNPACK_APPLY(1, v0)
-		FOX_REFLEXPR_UNPACK_APPLY(2, v0, v1)
-		FOX_REFLEXPR_UNPACK_APPLY(3, v0, v1, v2)
-		FOX_REFLEXPR_UNPACK_APPLY(4, v0, v1, v2, v3)
-		FOX_REFLEXPR_UNPACK_APPLY(5, v0, v1, v2, v3, v4)
-		FOX_REFLEXPR_UNPACK_APPLY(6, v0, v1, v2, v3, v4, v5)
-		FOX_REFLEXPR_UNPACK_APPLY(7, v0, v1, v2, v3, v4, v5, v6)
-		FOX_REFLEXPR_UNPACK_APPLY(8, v0, v1, v2, v3, v4, v5, v6, v7)
-		FOX_REFLEXPR_UNPACK_APPLY(9, v0, v1, v2, v3, v4, v5, v6, v7, v8)
-		FOX_REFLEXPR_UNPACK_APPLY(10, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9)
-		FOX_REFLEXPR_UNPACK_APPLY(11, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10)
-		FOX_REFLEXPR_UNPACK_APPLY(12, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11)
-		FOX_REFLEXPR_UNPACK_APPLY(13, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12)
-		FOX_REFLEXPR_UNPACK_APPLY(14, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13)
-		FOX_REFLEXPR_UNPACK_APPLY(15, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14)
-		FOX_REFLEXPR_UNPACK_APPLY(16, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15)
-		FOX_REFLEXPR_UNPACK_APPLY(17, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16)
-		FOX_REFLEXPR_UNPACK_APPLY(18, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17)
-		FOX_REFLEXPR_UNPACK_APPLY(19, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18)
-		FOX_REFLEXPR_UNPACK_APPLY(20, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19)
-		FOX_REFLEXPR_UNPACK_APPLY(21, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20)
-		FOX_REFLEXPR_UNPACK_APPLY(22, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21)
-		FOX_REFLEXPR_UNPACK_APPLY(23, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22)
-		FOX_REFLEXPR_UNPACK_APPLY(24, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23)
-		FOX_REFLEXPR_UNPACK_APPLY(25, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24)
-		FOX_REFLEXPR_UNPACK_APPLY(26, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25)
-		FOX_REFLEXPR_UNPACK_APPLY(27, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26)
-		FOX_REFLEXPR_UNPACK_APPLY(28, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27)
-		FOX_REFLEXPR_UNPACK_APPLY(29, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28)
-		FOX_REFLEXPR_UNPACK_APPLY(30, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29)
-		FOX_REFLEXPR_UNPACK_APPLY(31, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30)
-		FOX_REFLEXPR_UNPACK_APPLY(32, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31)
-		FOX_REFLEXPR_UNPACK_APPLY(33, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32)
-		FOX_REFLEXPR_UNPACK_APPLY(34, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33)
-		FOX_REFLEXPR_UNPACK_APPLY(35, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34)
-		FOX_REFLEXPR_UNPACK_APPLY(36, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35)
-		FOX_REFLEXPR_UNPACK_APPLY(37, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36)
-		FOX_REFLEXPR_UNPACK_APPLY(38, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37)
-		FOX_REFLEXPR_UNPACK_APPLY(39, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38)
-		FOX_REFLEXPR_UNPACK_APPLY(40, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39)
+		FOX_REFLEXPR_UNPACK_ALL
+	}
 
-		static_assert(size <= 40, "Unsupported number of struct members");
-	};
+	/**
+	 * \brief Creates a tuple object, deducing the target type from the types of members.
+	 * \tparam T Aggregate type
+	 * \param obj Object to make the tuple from.
+	 * \return A std::tuple object containing the given values.
+	 */
+	template<aggregate T>
+	constexpr auto make_tuple(T&& obj)
+	{
+		constexpr size_t size = tuple_size_v<T>;
+		static_assert(size <= FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS, "Unsupported number of struct members");
+
+		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args)
+		{
+			static_assert(I == sizeof...(Args) && "Size and Arguments mismatch.");
+			using ref_tester = details::ref_detector<T>;
+
+			return [&]<std::size_t... Is>(std::index_sequence<Is...>)
+			{
+				using tuple = std::tuple<Args...>;
+
+				if
+				constexpr ( std::is_const_v<std::remove_reference_t<T>> )
+				{
+					return std::tuple<
+						std::conditional_t < ref_tester::nth_reference[Is],
+						std::add_lvalue_reference_t<std::add_const_t<std::decay_t<std::tuple_element_t<Is, tuple>>>>,
+						std::remove_reference_t<std::decay_t<std::tuple_element_t<Is, tuple>>>
+						> ... >(std::forward<Args>(args)...);
+				}
+				else
+				{
+					return std::tuple<
+						std::conditional_t < ref_tester::nth_reference[Is],
+						std::add_lvalue_reference_t<std::decay_t<std::tuple_element_t<Is, tuple>>>,
+						std::remove_reference_t<std::decay_t<std::tuple_element_t<Is, tuple>>>
+					> ... >(std::forward<Args>(args)...);
+				}
+			}(std::index_sequence_for<Args...>{});
+		};
+
+		FOX_REFLEXPR_UNPACK_ALL
+	}
 
 #undef FOX_REFLEXPR_UNPACK_APPLY
 
-	template<std::default_initializable T, class Pred>
-	void for_each_member_type(Pred&& pred)
+	/**
+	 * \brief Provides compile-time indexed access to the types of the elements of the aggregate
+	 * \tparam I Index of the element
+	 * \tparam T Aggregate type 
+	 */
+	template<std::size_t I, aggregate T>
+	struct tuple_element
 	{
-		auto proxy = [&pred]<class U>(const U & v) -> void
-		{
-			pred.template operator() < U > ();
-		};
-
-		const T* v = nullptr;
-		for_each_member_variable(*v, proxy);
+		using type = std::tuple_element_t<I, decltype(::fox::reflexpr::make_tuple(std::declval<T>()))>;
 	};
 
-	template<aggregate T, class Pred>
-	void for_each_reflected_member_variable(T& obj, Pred&& pred)
+	/**
+	 * \brief Helper variable template. Provides compile-time indexed access to the types of the elements of the aggregate
+	 * \tparam I Index of the element
+	 * \tparam T Aggregate type
+	 */
+	template<std::size_t I, aggregate T>
+	using tuple_element_t = typename tuple_element<I, T>::type;
+
+	/**
+	 * \brief Extracts the Ith element from the aggregate.
+	 * \tparam I Index of the element
+	 * \tparam T Aggregate type
+	 * \param obj Object to extract element from
+	 * \return A reference to selected element of obj
+	 */
+	template<std::size_t I, aggregate T>
+	auto get(T& obj) noexcept ->
+	std::add_lvalue_reference_t<fox::reflexpr::tuple_element_t<I, T>>
+		requires ( tuple_size_v<T> > I )
 	{
-		_reflexpr::for_each_member_variable(obj, pred);
-	};
+		return std::get<I>(fox::reflexpr::tie(obj));
+	}
 
-	template<aggregate T, class Pred>
-	void for_each_reflected_member_type(Pred&& pred)
+	/**
+	 * \brief Extracts the Ith element from the aggregate.
+	 * \tparam I Index of the element
+	 * \tparam T Aggregate type
+	 * \param obj Object to extract element from
+	 * \return A reference to selected element of obj
+	 */
+	template<std::size_t I, aggregate T>
+	auto get(const T& obj) noexcept ->
+		std::add_lvalue_reference_t<std::add_const_t<std::remove_cvref_t<fox::reflexpr::tuple_element_t<I, T>>>>
+		requires (tuple_size_v<T> > I)
 	{
-		auto proxy = [&pred]<class U>(const U & v, const std::string & name) -> void
-		{
-			pred.template operator() < U > (name);
-		};
-
-		const T* v = nullptr;
-		_reflexpr::for_each_member_variable(*v, proxy);
-	};
-
+		return std::get<I>(fox::reflexpr::tie(obj));
+	}
 }
-
-
-#define _REFLECT_IDENTIFIER_PROXY(X) reflexpr_##X
-#define _REFLECT_IDENTIFIER(X) _REFLECT_IDENTIFIER_PROXY(X)
-
-#define REFLECT(...) typedef __VA_ARGS__ _REFLECT_IDENTIFIER(__LINE__)##_t;\
-	static size_t _REFLECT_IDENTIFIER(__LINE__)##_proxy = \
-		::fox::reflexpr::_reflexpr::type_register_proxy<_REFLECT_IDENTIFIER(__LINE__)##_t>(#__VA_ARGS__);\
 
 #endif
