@@ -1,106 +1,58 @@
-[![CMake MSVC Build and Test](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-msvc-build.yml/badge.svg)](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-msvc-build.yml)
+[![CMake on multiple platforms](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/RedSkittleFox/reflexpr/actions/workflows/cmake-multi-platform.yml)
 
 # reflexpr
 is a c++20 compile and runtime aggregate reflections header only library. It allows you to iterate over aggregate type's member variables.
 
 # Example Usage
 ```cpp
-// demo.cpp
 #include <iostream>
-#include <string_view>
-#include <algorithm>
 #include <string>
-
 #include <fox/reflexpr.hpp>
 
-struct aggregate_type
+struct my_aggregate
 {
 	int a;
 	float b;
-	std::string str;
-};
-
-REFLECT(
-struct aggregate_type_reflected
-{
-	int a;
-	float b;
-	std::string str;
-}
-);
-
-struct functor
-{
-	template<class T>
-	void operator()() const
-	{
-		std::cout << "Type: " << typeid(T).name() << '\n';
-	}
-};
-
-struct functor_reflected
-{
-	template<class T>
-	void operator()(const std::string& name) const
-	{
-		std::cout << "Name: " << name << " Type: " << typeid(T).name() << '\n';
-	}
+	std::string c;
+	int& d;
 };
 
 int main()
 {
-	// DEMO: fox::reflexpr::for_each_member_variable
+	int d = 5;
+	my_aggregate obj
 	{
-		std::cout << "For each member variable:\n";
-		auto func = []<class T>(T & v)
-		{
-			std::cout << "Type: " << typeid(T).name() << " Value: " << v << '\n';
-		};
+		.a = 1 ,
+		.b = 3.5f,
+		.c = "Foxes are great!",
+		.d = d
+	};
 
-		aggregate_type at{ 1 , 3.5f, "Foxes are great!" };
+	auto&& [v0, v1, v2, v3] = obj;
 
-		static_assert(fox::reflexpr::aggregate<aggregate_type>, "sus");
-		fox::reflexpr::for_each_member_variable(at, func);
-		std::cout << '\n';
-	}
-
-	// DEMO: fox::reflexpr::for_each_member_type
-	{
-		std::cout << "For each member type:\n";
-
-		fox::reflexpr::for_each_member_type<aggregate_type, functor>(functor{});
-		std::cout << '\n';
-	}
-
-	// DEMO: fox::reflexpr::for_each_reflected_member_variable
-	{
-		std::cout << "For each member variable reflected:\n";
-		auto func = []<class T>(T & v, const std::string& name)
-		{
-			std::cout << "Name: " << name << " Type: " << typeid(T).name() << " Value: " << v << '\n';
-		};
-
-		aggregate_type_reflected at{ 1 , 3.5f, "Foxes are great!" };
-
-		fox::reflexpr::for_each_reflected_member_variable(at, func);
-		std::cout << '\n';
-	}
-
-	// DEMO: fox::reflexpr::for_each_reflected_member_type
-	{
-		std::cout << "For each member type reflected:\n";
-
-		fox::reflexpr::for_each_reflected_member_type<aggregate_type_reflected, functor_reflected>(functor_reflected{});
-		std::cout << '\n';
-	}
+	// Get Nth member - fox::reflexpr::get<N>(aggregate)
+	std::cout << fox::reflexpr::get<0>(obj) << '\n'; // prints obj.a 
 	
-	return 1;
+	// Iterate over members - fox::reflexpr::for_each(aggregate, func)
+	fox::reflexpr::for_each(obj, [](auto&& v) {std::cout << v << ' '; }), std::cout << '\n';
+
+	// Create a tuple-tie from members - fox::reflexpr::tie(aggregate)
+	auto tie = fox::reflexpr::tie(obj);
+	std::cout << (std::get<2>(tie) = 2) << '\n';
+
+	// Create a tuple from members - fox::reflexpr::make_tuple(aggregate)
+	auto tuple = fox::reflexpr::make_tuple(obj);
+	std::cout << (std::get<2>(tuple)) << '\n';
+
+	// Tuple size - fox::reflexpr::tuple_size_v<aggregate_type>
+	static_assert(fox::reflexpr::tuple_size_v<my_aggregate> == static_cast<std::size_t>(4));
+
+	// Tuple Nth type
+	static_assert(std::is_same_v<fox::reflexpr::tuple_element_t<3, my_aggregate>, int&>);
+
+	return 0;
 }
 ```
 
-# Planned Improvements
-*	Improving member variable names parsing.
-*	Write unit tests.
-	
 # Limitation
 Right now it supports only up to 40 member variables and introduces small runtime overhead when registering member variable names.

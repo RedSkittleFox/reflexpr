@@ -15,7 +15,7 @@ if(${IPO_SUPPORTED})
     set_target_properties(reflexpr-demo PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-if(MSVC)
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     target_compile_options(
         reflexpr-demo
         PRIVATE /WX # all warnings as errors 
