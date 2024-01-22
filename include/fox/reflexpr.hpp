@@ -27,6 +27,31 @@
 #include <limits>
 #include <utility>
 
+#ifdef FOX_REFLEXPR_INLINE
+#pragma message "FOX_REFLEXPR_INLINE macro is internally used by redskittlefox/reflexpr library"
+#undef FOX_REFLEXPR_INLINE
+#endif
+
+#ifdef FOX_REFLEXPR_CONSTEXPR_LAMBDA
+#pragma message "FOX_REFLEXPR_CONSTEXPR_LAMBDA macro is internally used by redskittlefox/reflexpr library"
+#undef FOX_REFLEXPR_CONSTEXPR_LAMBDA
+#endif
+
+#ifdef __clang__
+#define FOX_REFLEXPR_INLINE __attribute__((always_inline))
+#define FOX_REFLEXPR_CONSTEXPR_LAMBDA __attribute__((always_inline)) constexpr
+#endif
+
+#if __GNUC__
+#define FOX_REFLEXPR_INLINE __attribute__((always_inline))
+#define FOX_REFLEXPR_CONSTEXPR_LAMBDA constexpr
+#endif
+
+#if _MSC_VER
+#define FOX_REFLEXPR_INLINE __forceinline
+#define FOX_REFLEXPR_CONSTEXPR_LAMBDA constexpr 
+#endif
+
 namespace fox::reflexpr
 {
 	template<class T>
@@ -216,12 +241,12 @@ namespace fox::reflexpr
 	 * \param func Functor invoked for each member.
 	 */
 	template<aggregate T, class Func>
-	constexpr void for_each(T&& obj, Func&& func)
+	FOX_REFLEXPR_INLINE constexpr void for_each(T&& obj, Func&& func)
 	{
 		constexpr size_t size = tuple_size_v<T>;
 		static_assert(size <= FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS, "Unsupported number of struct members");
 
-		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args) -> void
+		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args) FOX_REFLEXPR_CONSTEXPR_LAMBDA -> void
 		{
 			static_assert(I == sizeof...(Args) && "Size and Arguments mismatch.");
 			if constexpr(std::is_lvalue_reference_v<decltype(obj)> && std::is_const_v<std::remove_reference_t<decltype(obj)>>)
@@ -244,12 +269,12 @@ namespace fox::reflexpr
 	 * \return A std::tuple object containing lvalue references.
 	 */
 	template<aggregate T>
-	constexpr auto tie(T& obj)
+	FOX_REFLEXPR_INLINE constexpr auto tie(T& obj)
 	{
 		constexpr size_t size = tuple_size_v<T>;
 		static_assert(size <= FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS, "Unsupported number of struct members");
 
-		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args)
+		auto apply_pack = [&]<std::size_t I, class... Args>(std::in_place_index_t<I>, Args&&... args) FOX_REFLEXPR_CONSTEXPR_LAMBDA
 		{
 			static_assert(I == sizeof...(Args) && "Size and Arguments mismatch.");
 			if constexpr(std::is_const_v<T>)
@@ -272,7 +297,7 @@ namespace fox::reflexpr
 	 * \return A std::tuple object containing the given values.
 	 */
 	template<aggregate T>
-	constexpr auto make_tuple(T&& obj)
+	FOX_REFLEXPR_INLINE constexpr auto make_tuple(T&& obj)
 	{
 		constexpr size_t size = tuple_size_v<T>;
 		static_assert(size <= FOX_REFLEXPR_NUM_SUPPORTED_MEMBERS, "Unsupported number of struct members");
@@ -282,7 +307,7 @@ namespace fox::reflexpr
 			static_assert(I == sizeof...(Args) && "Size and Arguments mismatch.");
 			using ref_tester = details::ref_detector<T>;
 
-			return [&]<std::size_t... Is>(std::index_sequence<Is...>)
+			return [&]<std::size_t... Is>(std::index_sequence<Is...>) FOX_REFLEXPR_CONSTEXPR_LAMBDA
 			{
 				using tuple = std::tuple<Args...>;
 
@@ -338,7 +363,7 @@ namespace fox::reflexpr
 	 * \return A reference to selected element of obj
 	 */
 	template<std::size_t I, aggregate T>
-	auto get(T& obj) noexcept ->
+	FOX_REFLEXPR_INLINE constexpr  auto get(T& obj) noexcept ->
 	std::add_lvalue_reference_t<fox::reflexpr::tuple_element_t<I, T>>
 		requires ( tuple_size_v<T> > I )
 	{
@@ -353,7 +378,7 @@ namespace fox::reflexpr
 	 * \return A reference to selected element of obj
 	 */
 	template<std::size_t I, aggregate T>
-	auto get(const T& obj) noexcept ->
+	FOX_REFLEXPR_INLINE constexpr auto get(const T& obj) noexcept ->
 		std::add_lvalue_reference_t<std::add_const_t<std::remove_cvref_t<fox::reflexpr::tuple_element_t<I, T>>>>
 		requires (tuple_size_v<T> > I)
 	{

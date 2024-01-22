@@ -13,39 +13,40 @@ if (PROJECT_IS_TOP_LEVEL)
     
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED)
+
+    option(
+    	FOX_REFLEXPR_BUILD_SAMPLES 
+        "If samples are built."
+    	ON
+    )
+
+    option(
+	    FOX_REFLEXPR_BUILD_TESTS
+        "If unit tests are built"
+	    ON
+    )
+
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+else()
+    option(
+    	FOX_REFLEXPR_BUILD_SAMPLES 
+        "If samples are built."
+    	OFF
+    )
+    
+    option(
+    	FOX_REFLEXPR_BUILD_TESTS
+        "If unit tests are built"
+    	OFF
+    )
 endif()
     
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-include(CheckIPOSupported)
-check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT IPO_NOT_SUPPORTED_ERROR LANGUAGES CXX)
-
-if(NOT ${IPO_SUPPORTED})
-    message(STATUS "IPO / LTO not supported: <${IPO_NOT_SUPPORTED_ERROR}>")
-else()
-    message(STATUS "IPO / LTO supported.")
-endif()
-
 include(FetchContent)
 
 add_subdirectory("include")
 
 add_library(fox::reflexpr ALIAS reflexpr)
-
-option(
-	FOX_REFLEXPR_BUILD_SAMPLES 
-    "If samples are built."
-	ON
-)
-
-option(
-	FOX_REFLEXPR_BUILD_TESTS
-    "If unit tests are built"
-	ON
-)
-
-option(FOX_REFLEXPR_BUILD_SAMPLES ON)
-option(FOX_REFLEXPR_BUILD_TESTS ON)
 
 if (FOX_REFLEXPR_BUILD_SAMPLES)
 	add_subdirectory("sample")
