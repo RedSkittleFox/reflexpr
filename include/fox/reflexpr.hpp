@@ -47,7 +47,7 @@
 #define FOX_REFLEXPR_CONSTEXPR_LAMBDA constexpr
 #endif
 
-#if _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 #define FOX_REFLEXPR_INLINE __forceinline
 #define FOX_REFLEXPR_CONSTEXPR_LAMBDA constexpr 
 #endif
